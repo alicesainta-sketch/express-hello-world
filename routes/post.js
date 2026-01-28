@@ -1,13 +1,20 @@
 const express = require("express");
 var route = express.Router();
 
+const postModel = require("../models/post");
+
 route.get("/", (req, res) => {
   res.send({ id: 1, title: "express 入门教程" });
 });
 
-route.post("/", (req, res) => {
-  console.log("保存文章", req.body);
-  res.status(201).send({ id: 2, ...req.body });
+route.post("/", async (req, res) => {
+  try {
+    const newPost = await postModel.save(req.body);
+    res.status(201).json(newPost);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send();
+  }
 });
 
 route.put("/:id", (req, res) => {
